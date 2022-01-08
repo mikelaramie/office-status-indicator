@@ -7,10 +7,7 @@ import pytz
 from datetime import datetime, timedelta, timezone
 
 from calendar_setup import get_calendar_service
-from unicornhatmini import UnicornHATMini
-
-unicornhatmini = UnicornHATMini()
-unicornhatmini.set_brightness(0.1)
+import rainbowhat as rh
 
 # Global variables
 OFFICE_STATUS_HOUR_START = int(os.getenv("OFFICE_STATUS_HOUR_START", 8))
@@ -38,27 +35,36 @@ def get_events():
     events = events_result.get('items', [])
     return events
 
+def display_message(message):
+    rh.display.print_str(message)
+    rh.display.show()
 
-def set_red():
+def set_busy():
     set_color(255, 0, 0)
+    display_message("BUSY")
 
-
-def set_orange():
+def set_warn():
     set_color(255, 144, 0)
+    display_message("SOON")
 
 
-def set_green():
+def set_open():
     set_color(0, 255, 0)
+    display_message("OPEN")
 
 
 def set_off():
     set_color(0, 0, 0)
+    display_message("    ")
 
 
 def set_color(r, g, b):
-    unicornhatmini.set_all(r, g, b)
-    unicornhatmini.show()
+    rh.rainbow.set_pixel(6-x, r, g, b)
+    rh.rainbow.show()
 
+@rh.touch.A.press()
+def press_a(channel):
+    set_busy()
 
 def read_datetime(timestamp):
     return datetime.strptime(timestamp, "%Y-%m-%dT%H:%M:%S%z")
