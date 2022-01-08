@@ -1,5 +1,8 @@
 # Office Status Indicator
 
+## TODO:
+- Add steps for creating Native OAuth Client ID
+
 ## Summary
 
 This is a project to create a Google Calendar integrated status indicator for home office use.

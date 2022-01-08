@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import datetime
 import pickle
 import os.path
@@ -12,7 +14,7 @@ SCOPES = [
 ]
 
 CREDENTIALS_FILE = os.path.join(os.path.dirname(__file__), 'data', 'credentials.json')
-TOKEN_FILE = os.path.join(os.path.dirname(__file__), 'data', 'token.pickle')
+TOKEN_FILE = os.path.join(os.path.dirname(__file__), 'data', 'token.json')
 
 def get_calendar_service():
     creds = None

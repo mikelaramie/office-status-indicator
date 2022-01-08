@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import json
 import os
 import time
@@ -53,8 +55,6 @@ def set_open():
 
 def set_off():
     #Show Time/Temp?
-    #set_color(0, 0, 0)
-    #display_message("    ")
     set_clear()
 
 def set_error():
