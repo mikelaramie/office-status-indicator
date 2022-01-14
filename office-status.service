@@ -1,0 +1,11 @@
+#Copy to /lib/systemd/system and then run `systemctl enable office-status` to start on boot
+[Unit]
+ Description=Office Status Indicator Service
+ After=multi-user.target
+
+[Service]
+ Type=idle
+ ExecStart=/usr/bin/python /home/pi/office-status-indicator/office_status_indicator.py
+
+[Install]
+ WantedBy=multi-user.target

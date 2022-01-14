@@ -1,35 +1,52 @@
 # Office Status Indicator
 
-## TODO:
-- Add steps for creating Native OAuth Client ID
-
 ## Summary
 
-This is a project to create a Google Calendar integrated status indicator for home office use.
+This is a project to create a Google Calendar integrated status indicator for home office use, based on the [original project from TheAlanNix](https://github.com/TheAlanNix/office-status-indicator).  It has been modified to use a [Pimoroni Rainbow HAT](https://shop.pimoroni.com/products/rainbow-hat-for-android-things) instead of a [Unicorn HAT Mini](https://shop.pimoroni.com/products/unicorn-hat-mini) because...well, I had one lying around.
 
 ![Office Status Indicator](img/office_status_indicator.jpg)
 
 This project utilizes the following hardware:
-- [Raspberry Pi Zero W](https://shop.pimoroni.com/products/raspberry-pi-zero-wh-with-pre-soldered-header)
-- [Unicorn HAT Mini](https://shop.pimoroni.com/products/unicorn-hat-mini)
+- [Raspberry Pi 3b+](https://www.raspberrypi.com/products/raspberry-pi-3-model-b-plus/) (but should work with any Pi)
+- [Pimoroni Rainbow HAT](https://shop.pimoroni.com/products/rainbow-hat-for-android-things)
 
 ## Requirements
 
-- Docker installed on your Raspberry Pi
 - A Google Project with the Calendar API enabled
+- The json file from a Native App OAuth Client (*not* a Service Account Credential)
+
+### Optional
+- Docker installed on your Raspberry Pi
+
 
 ## Setup
 
-First, you'll need to create a Google Calendar API project.  There's a good tutorial [here](https://developers.google.com/calendar/quickstart/python).  Download the `credentials.json` file for the project - you'll need it to allow the project to access your Google calendar - and then either copy the file to your container and place it in the `/app` directory, or mount the file to the container from the host.
+First, you'll need to create a Google Calendar API project.  There's a good tutorial [here](https://developers.google.com/calendar/quickstart/python).  Download the `credentials.json` file for the OAuth Client - you'll need it to allow the application to access your Google calendar - and then either copy the file to your `data/` directory, or mount the file to the container from the host.
 
-On the Raspberry Pi Zero W with the Unicorn HAT Mini, run the following command to download and run the container:
+### Run as a system service
+Install the required packages by running `sudo pip install -r requirements.txt` 
+
+Make sure everything works as expected by manually invoking the `office_status_indicator.py` script.  
+
+Once you've confirmed that the configuration is correct, configure the service:
+```
+sudo cp office-status.service /etc/systemd/system/
+sudo systemctl enable office-status
+sudo systemctl start office-status
+```
+
+### Run as a container (Needs Fix)
+
+**This method does not currently work with this code as-is; will fix later.**
+
+On the Raspberry Pi, run the following command to download and run the container:
 ```sh
 docker run -it \
            --name office-status \
            --privileged \
            --restart=always \
-           --volume $(pwd)/:/app/data \
-           --volume $(pwd)/credentials.json:/app/data/credentials.json:ro \
+           --volume $(pwd)/data:/app/data \
+           --volume $(pwd)/data/credentials.json:/app/data/credentials.json:ro \
            alannix/office-status:latest
 ```
 
@@ -49,3 +66,7 @@ You can tweak the operation of the script by providing any of the following envi
 | OFFICE_STATUS_WARNING_MINUTES | The number of minutes prior to the next meeting that the light should change to 'warning' status. | Integer | 10 |
 | OFFICE_STATUS_WEEK_START | The integer representation of the day of the week to start the work week (Monday is 0 and Sunday is 6) | Integer | 0 |
 | OFFICE_STATUS_WEEK_END | The integer representation of the day of the week to end the work week (Monday is 0 and Sunday is 6) | Integer | 4 |
+
+## TODO
+- Add steps for creating Native OAuth Client ID
+- Get container working with Rainbow HAT (library issue with python3-smbus)
